@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 21</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .hrow { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 22px; margin: 14px 0 16px; }
+  .hnum { display: inline-flex; gap: 3px; }
+  .hnum .dig, .hnum .hid { width: 30px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink); border-radius: 5px; font-size: 22px; font-weight: 700; background: #fff; }
+  .hnum .hid { background: var(--ink); color: #fff; font-size: 18px; }
+  .hnum .hid.sq { color: #f2c14e; }
+  .hnum .hid.tri { color: #8fd3c7; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 21</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 21
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: cloze passage ---- */
+const CLOZE_TEXT = `
+<p>For years, Sydney watched its new bridge grow. Instead of building the arch up from the ground, the engineers built it out from both shores at once: two great steel halves reaching towards each other across the harbour. Huge cables tied each half back to the land, so that neither half would {1} into the water before the two sides met.</p>
+<p>In August 1930 the two halves finally touched. Then, on 19 March 1932, hundreds of thousands of people crowded around the harbour for the opening. The Premier, Jack Lang, was about to cut the ribbon when a man on horseback, dressed in a military uniform, charged forward and slashed it with his sword. His name was Francis de Groot, and he believed the bridge should have been opened by a representative of the King, not by a politician. He was quickly taken away by police. {2}, the ribbon was tied back together and the Premier cut it properly.</p>
+<p>Today the bridge carries trains, cars, bicycles and people on foot. Its long, curved shape has also earned it a {3} nickname: many Sydneysiders simply call it “the Coathanger”.</p>`;
+
+function clozeHtml() {
+  const si = SECTIONS.findIndex(s => s.id === "reading");
+  let t = CLOZE_TEXT;
+  SECTIONS[si].questions.forEach((q, i) => {
+    const chosen = responses[si][i];
+    let fill;
+    if (passMode === "review") fill = `<span class="gap filled correct">(${i + 1}) ${q.options[q.answer]}</span>`;
+    else if (chosen !== null) fill = `<span class="gap filled">(${i + 1}) ${q.options[chosen]}</span>`;
+    else fill = `<span class="gap">(${i + 1}) ……</span>`;
+    t = t.replace(`{${i + 1}}`, fill);
+  });
+  return t;
+}
+
+const PASSAGE = {
+  title: "The Coathanger",
+  note: "Read the text below and decide which answer best fits each gap.",
+  html: clozeHtml
+};
+
+/* ---- Thinking Skills Q3: gears ---- */
+const GEARS = { 1: [60, 100, 34], 2: [122, 100, 28], 3: [122, 48, 24], 4: [180, 100, 30], 5: [180, 154, 26], 6: [234, 154, 28] };
+const GEARS_SVG = (() => {
+  const gear = (cx, cy, r, label, fill) => {
+    const teeth = Math.round(r / 3.4), pts = [];
+    for (let i = 0; i < teeth * 4; i++) {
+      const a = (i / (teeth * 4)) * 2 * Math.PI, rr = (i % 4 === 1 || i % 4 === 2) ? r + 1 : r - 4;
+      pts.push((cx + rr * Math.cos(a)).toFixed(1) + "," + (cy + rr * Math.sin(a)).toFixed(1));
+    }
+    return `<polygon points="${pts.join(" ")}" fill="${fill}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="${cx}" cy="${cy}" r="${r * 0.42}" fill="#fff" stroke="${INK}" stroke-width="1.4"/>
+            <text x="${cx}" y="${cy + 6}" font-size="16" font-weight="700" text-anchor="middle" fill="${INK}">${label}</text>`;
+  };
+  let g = "";
+  Object.entries(GEARS).forEach(([k, [x, y, r]]) => g += gear(x, y, r, k, k === "1" ? "#f2d28c" : "#c6d4e8"));
+  // clockwise arrow around the left side of gear 1 (moving upwards on the left = clockwise)
+  g += `<path d="M22.3 126.4 A 46 46 0 0 1 22.3 73.6" fill="none" stroke="#c43d3d" stroke-width="3"/>
+        <polygon points="25.7,68.7 24.9,80.3 15.1,73.5" fill="#c43d3d"/>`;
+  return `<svg viewBox="2 14 270 182" width="405" height="273" role="img" aria-label="Six gears. Gear 1 turns clockwise and touches gear 2. Gear 2 touches gear 3 above it and gear 4 to its right. Gear 4 touches gear 5 below it. Gear 5 touches gear 6 to its right.">${g}</svg>`;
+})();
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    passage: PASSAGE,
+    intro: "Read the text, then decide which answer (A, B, C or D) best fits each gap.",
+    questions: [
+      {
+        stem: "Which word best fits <b>gap 1</b>?",
+        options: ["glide", "topple", "dive", "pour"],
+        answer: 1,
+        skill: "choosing a word that fits the meaning",
+        explain: `<p>Each half of the arch stuck out over the water with nothing underneath it. Without the cables holding it back, it would tip over and fall: it would <b>topple</b> into the water.</p>
+                  <p class="why-not">“Glide” means move smoothly and gently, which isn’t what a falling steel arch does. “Dive” is something a person or an animal does on purpose. “Pour” is for liquids, not steel.</p>`
+      },
+      {
+        stem: "Which word or phrase best fits <b>gap 2</b>?",
+        options: ["For example", "In contrast", "Afterwards", "Before that"],
+        answer: 2,
+        skill: "choosing a connective that shows time order",
+        explain: `<p>The events happen in order: de Groot cuts the ribbon, he is taken away, and <em>then</em> the ribbon is tied back together and cut properly. “<b>Afterwards</b>” shows that the last part happened later.</p>
+                  <p class="why-not">“Before that” puts the events in the wrong order, because they couldn’t retie the ribbon before it was cut. “For example” introduces an example, and “In contrast” introduces an opposite. Neither fits here.</p>`
+      },
+      {
+        stem: "Which word best fits <b>gap 3</b>?",
+        options: ["playful", "secret", "official", "frightening"],
+        answer: 0,
+        skill: "choosing a word that matches the tone",
+        explain: `<p>Calling a huge, famous bridge “the Coathanger”, after an ordinary household object, is a fond joke about its shape. That makes it a <b>playful</b> nickname.</p>
+                  <p class="why-not">“Official” is the trap: a nickname is the opposite of an official name. “Secret” doesn’t fit, because “many Sydneysiders” use it. Nothing about a coathanger is “frightening”.</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `<p class="quote" style="margin-top:0"><em class="speaker">Leah:</em> “Our class should get a class pet. Looking after an animal would teach us all to be more responsible.”</p>
+               <p style="margin:10px 0 0">Which one of these statements, if true, most weakens Leah’s argument?</p>`,
+        options: ["Many students would really enjoy having a pet in class.",
+                  "Some pets need to be fed and cleaned every single day.",
+                  "Lots of students in the class already have pets at home.",
+                  "In classes with pets, the teacher does most of the work."],
+        answer: 3,
+        skill: "weakening an argument",
+        explain: `<p>Leah’s reason is that <em>looking after</em> the pet would teach the students responsibility. If the teacher ends up doing most of the feeding and cleaning, then the students wouldn’t be looking after it, so they wouldn’t learn the responsibility Leah expects.</p>
+                  <p class="why-not">B is the trap: it describes work a pet needs, but that actually makes Leah’s point sound <em>stronger</em>. A is about enjoyment, not responsibility. C doesn’t tell us whether a class pet would teach responsibility.</p>`
+      },
+      {
+        stem: `One of three children broke a vase.
+               <ul class="facts">
+                 <li><b>Amy</b> says: “Ben did it.”</li>
+                 <li><b>Ben</b> says: “I didn’t do it.”</li>
+                 <li><b>Cal</b> says: “I didn’t do it.”</li>
+               </ul>
+               <p style="margin:10px 0 0">Only <b>one</b> of the children is telling the truth. Who broke the vase?</p>`,
+        options: ["Amy", "Ben", "Cal", "It is impossible to tell"],
+        answer: 2,
+        skill: "testing each possibility against a rule",
+        explain: `<p>Try each child as the one who broke it, and count how many statements are true.</p>
+                  <p>If <b>Amy</b> did it: Amy’s statement is false, Ben’s is true, Cal’s is true. That makes 2 true statements, which is too many.<br>
+                  If <b>Ben</b> did it: Amy’s is true, Ben’s is false, Cal’s is true. That makes 2 true, again too many.<br>
+                  If <b>Cal</b> did it: Amy’s is false, Ben’s is true, Cal’s is false. That makes exactly 1 true. ✓</p>
+                  <p class="why-not">Ben (B) is the trap: Amy says it was Ben, and it is tempting to believe her. But if it were Ben, Cal would be telling the truth too. Only Cal leaves exactly one true statement, so it <em>can</em> be worked out.</p>`
+      },
+      {
+        stem: `Six gears are joined together as shown. Gear 1 turns clockwise.
+               <div class="figure">${GEARS_SVG}</div>
+               <p style="margin:0">Which other gears also turn <b>clockwise</b>?</p>`,
+        options: ["3 and 4 only", "3, 4 and 6", "2, 3 and 5", "4 and 6 only"],
+        answer: 1,
+        skill: "following movement through a system",
+        explain: `<p>When two gears touch, they always turn in <em>opposite</em> directions. Follow the chain from gear 1 (clockwise):</p>
+                  <p>Gear 2 touches gear 1, so it turns anticlockwise.<br>Gears 3 and 4 both touch gear 2, so they both turn clockwise.<br>Gear 5 touches gear 4, so it turns anticlockwise.<br>Gear 6 touches gear 5, so it turns clockwise.</p>
+                  <p>So the clockwise gears are <b>3, 4 and 6</b>.</p>
+                  <p class="why-not">A (3 and 4 only) is the trap: it stops before the end of the chain and misses gear 6. C lists the gears that turn anticlockwise. D misses gear 3, which branches off upwards from gear 2.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `A night train leaves at 9:40 pm and arrives at 6:15 am the next morning.
+               <p style="margin:10px 0 0">How long is the journey?</p>`,
+        options: ["3 h 25 min", "8 h 35 min", "9 h 15 min", "9 h 25 min", "15 h 55 min"],
+        answer: 1,
+        skill: "working out time across midnight",
+        explain: `<p>Break the journey at easy times. From 9:40 pm to 10:00 pm is 20 minutes. From 10:00 pm to midnight is 2 hours. From midnight to 6:15 am is 6 hours 15 minutes. Altogether that is 8 hours and 35 minutes (20 + 15 = 35 minutes).</p>
+                  <p class="why-not">9 h 25 min (D) is the trap: 9:40 pm to 6:40 am is 9 hours, but the train arrives 25 minutes <em>earlier</em> than 6:40, so you must take 25 minutes away, not add it. 9 h 15 min (C) subtracts the times like ordinary numbers (3015 − 2140 = 875), but there are 60 minutes in an hour, not 100. 3 h 25 min (A) just takes 6:15 away from 9:40. 15 h 55 min (E) adds the two times together.</p>`
+      },
+      {
+        stem: `Four whole numbers add up to <b>31</b>.
+               <p style="margin:10px 0 0">Which of these <b>must</b> be true?</p>`,
+        options: ["All four numbers are odd.",
+                  "Exactly two of the numbers are odd.",
+                  "All four numbers are even.",
+                  "At least one of the numbers is even.",
+                  "Exactly three of the numbers are odd."],
+        answer: 3,
+        skill: "reasoning about odd and even numbers",
+        explain: `<p>Even numbers never change whether a total is odd or even. Each odd number flips it. To get an <b>odd</b> total like 31, you need an <b>odd</b> number of odd numbers: either 1 or 3 of them.</p>
+                  <p>If 1 number is odd, the other 3 are even. If 3 are odd, the other 1 is even. Either way, there is <b>at least one even number</b>. For example, 10 + 10 + 10 + 1 = 31 and 9 + 9 + 9 + 4 = 31.</p>
+                  <p class="why-not">E (exactly three odd) is the trap. It <em>can</em> happen (9 + 9 + 9 + 4), but it doesn’t have to: 10 + 10 + 10 + 1 has only one odd number. A and B are impossible, because four or two odd numbers always make an even total. C is impossible, because even numbers always add up to an even total.</p>`
+      },
+      {
+        stem: `Tom is thinking of a whole number.
+               <ul class="facts">
+                 <li>When he doubles it and adds 3, the answer is <b>less than 30</b>.</li>
+                 <li>When he takes 5 away from it, the answer is <b>more than 5</b>.</li>
+               </ul>
+               <p style="margin:10px 0 0">How many different numbers could Tom be thinking of?</p>`,
+        options: ["1", "2", "3", "4", "13"],
+        answer: 2,
+        skill: "finding the numbers that fit two conditions",
+        explain: `<p>First rule: double the number + 3 is less than 30. 13 works (26 + 3 = 29), but 14 doesn’t (28 + 3 = 31). So the number is 13 or less.</p>
+                  <p>Second rule: the number − 5 is more than 5. 11 works (11 − 5 = 6), but 10 doesn’t (10 − 5 = 5, which is not <em>more</em> than 5). So the number is 11 or more.</p>
+                  <p>The numbers that fit both rules are 11, 12 and 13, which makes <b>3</b> numbers.</p>
+                  <p class="why-not">4 (D) is the trap: it lets in 10, but 10 − 5 = 5 is equal to 5, not more than 5. 2 (B) leaves out one end, usually 11 or 13. 13 (E) only uses the first rule and counts every number from 1 to 13.</p>`
+      }
+    ]
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+function showStart() {
+  hdrSection.textContent = "";
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 21</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Take as long as you need — there is no time limit.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <button class="primary" id="start">Start the reading section</button>
+    </div>`;
+  document.getElementById("start").onclick = () => { current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
